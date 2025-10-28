@@ -7,16 +7,6 @@ AI Usage: AI helped with syntax fixes and function structure.
 """
 # AI Usage: Used AI to identify errors and help me fix variable mistakes
 # Input section
-name = input("Enter your name: ")
-character_class = input("What class will you choose? (Warrior/Mage/Rogue/Cleric)?: ")
-
-# Global base variables
-strength = 0   # scale 0–1000
-level = 1      # scale 1–100
-magic = 0      # scale 0–100
-health = 0     # scale 0–100
-gold = 100     # scale 100–999,999,999,999
-
 
 # =============================
 # Function 1 - Character Creator
@@ -26,7 +16,7 @@ def create_character(name, character_class):
     # stat constants
     level = 1
     gold = 100
-    # Added the if statement is below since test cases weren't passing 
+    # Added the if statement is below since test cases weren't passing
     if name is None:
         name = input("Enter your name: ")
     # stats assigned based on character class
@@ -152,6 +142,8 @@ def level_up(character):
 if __name__ == "__main__":
     print("=== CHARACTER CREATOR ===")
     print("Test your functions here!")
+    name = input("Enter your name: ")
+    character_class = input("What class will you choose? (Warrior/Mage/Rogue/Cleric)?: ")
 
     # create character
     char1 = create_character(name, character_class)
