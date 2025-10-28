@@ -18,10 +18,9 @@ def create_character(name, character_class):
     strength, magic, health = calculate_stats(character_class, level)
 
     valid_classes = ["Warrior", "Mage", "Rogue", "Cleric"]
-    while character_class not in valid_classes:
-        print("Invalid class. Please choose Warrior, Mage, Rogue, or Cleric.")
-        character_class = input("Choose a class: ")
-# AI USAGE - Used ChatGPT to create a while loop to keep receiving input until the code accepted it.
+    if character_class not in valid_classes:
+        return None
+
     # Build character dictionary (autograder expects these exact keys)
     character = {
         "name": name,
@@ -40,7 +39,7 @@ def create_character(name, character_class):
 # Function 2 - Stat Calculations
 # =============================
 def calculate_stats(character_class, level):
-    character_class = character_class.lower() # AI suggested for me to use .lower(), I don't believe it worked out.
+    character_class = character_class.lower()
     strength = 5
     magic = 15
     health = 80
