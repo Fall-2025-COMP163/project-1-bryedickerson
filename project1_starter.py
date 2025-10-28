@@ -9,45 +9,27 @@ AI Usage: AI helped with syntax fixes and function structure.
 # =============================
 # Function 1 - Character Creator
 # =============================
-def create_character(name=None, character_class=None):
+def create_character(name, character_class):
     """
     Creates a character dictionary with default stats based on the class.
     Loops until a valid class is entered.
     """
+    level = 1
+    strength, magic, health = calculate_stats(character_class, level)
 
-    # If no name or class passed (like from pytest), skip user input. Used AI here to identify
-    if name is None:
-        name = input("Enter your name: ") or ""
-
-    # List of valid classes
     valid_classes = ["Warrior", "Mage", "Rogue", "Cleric"]
-
-    # Ask for class until valid one is entered
     while character_class not in valid_classes:
-        if character_class is None:
-            character_class = input("Choose a class (Warrior, Mage, Rogue, Cleric): ")
-        elif character_class not in valid_classes:
-            print("Invalid class. Please choose Warrior, Mage, Rogue, or Cleric.")
-            character_class = None  # reset so it loops again
-
-    # Base stats depending on class
-    if character_class == "Warrior":
-        stats = {"strength": 80, "magic": 20, "health": 100}
-    elif character_class == "Mage":
-        stats = {"strength": 30, "magic": 90, "health": 60}
-    elif character_class == "Rogue":
-        stats = {"strength": 60, "magic": 40, "health": 80}
-    else:  # Cleric
-        stats = {"strength": 50, "magic": 70, "health": 70}
-
+        print("Invalid class. Please choose Warrior, Mage, Rogue, or Cleric.")
+        character_class = input("Choose a class: ")
+# AI USAGE - Used ChatGPT to create a while loop to keep receiving input until the code accepted it.
     # Build character dictionary (autograder expects these exact keys)
     character = {
         "name": name,
         "class": character_class,
         "level": 1,
-        "strength": stats["strength"],
-        "magic": stats["magic"],
-        "health": stats["health"],
+        "strength":strength,
+        "magic": magic,
+        "health": health,
         "gold": 100
     }
 
@@ -58,56 +40,87 @@ def create_character(name=None, character_class=None):
 # Function 2 - Stat Calculations
 # =============================
 def calculate_stats(character_class, level):
+    character_class = character_class.lower() # AI suggested for me to use .lower(), I don't believe it worked out.
+    strength = 5
+    magic = 15
+    health = 80
+
     if character_class == "warrior":
-        return 70 + (level * 10), 15 + (level * 3), 90 + (level * 8)
+        strength += 85
+        magic += 5
+        health += 15
     elif character_class == "mage":
-        return 30 + (level * 4), 90 + (level * 10), 60 + (level * 5)
+        strength += 30
+        magic += 70
+        health += 0
     elif character_class == "rogue":
-        return 55 + (level * 7), 45 + (level * 6), 70 + (level * 5)
+        strength += 55
+        magic += 25
+        health -= 10
     elif character_class == "cleric":
-        return 50 + (level * 6), 75 + (level * 7), 80 + (level * 6)
+        strength += 45
+        magic += 35
+        health += 10
     else:
-        return 0, 0, 0
+        print('invalid')
+        return calculate_stats('Warrior', level)
+    return strength, magic, health
 
 
 # =============================
 # Function 3 - Character File Saving
 # =============================
 def save_character(character, filename):
-    try:
-        with open(filename, "w", encoding="utf-8") as file:
-            file.write(f"Character Name: {character['name']}\n")
-            file.write(f"Class: {character['class']}\n")
-            file.write(f"Level: {character['level']}\n")
-            file.write(f"Strength: {character['strength']}\n")
-            file.write(f"Magic: {character['magic']}\n")
-            file.write(f"Health: {character['health']}\n")
-            file.write(f"Gold: {character['gold']}\n")
-        return True
-    except Exception:
+    import os
+    if not isinstance(character, dict) or not filename:
         return False
+    directory = os.path.dirname(filename)
+    if directory and not os.path.exists(directory):
+        return False
+
+    with open(filename, "w") as file:
+        file.write(f"Character Name: {character['name']}\n")
+        file.write(f"Class: {character['class']}\n")
+        file.write(f"Level: {character['level']}\n")
+        file.write(f"Strength: {character['strength']}\n")
+        file.write(f"Magic: {character['magic']}\n")
+        file.write(f"Health: {character['health']}\n")
+        file.write(f"Gold: {character['gold']}\n")
+    return True
 
 
 # =============================
 # Function 4 - Loading Character
 # =============================
+import os
+
 def load_character(filename):
-    try:
-        with open(filename, "r", encoding="utf-8") as file:
-            lines = file.readlines()
-        character = {}
-        for line in lines:
-            key, value = line.strip().split(": ", 1)
-            key = key.lower().replace("character ", "")
-            if value.isdigit():
-                value = int(value)
-            character[key] = value
-        return character
-    except FileNotFoundError:
-        return None
-    except Exception:
+    # Check if file exists first
+    if not os.path.exists(filename):
         return None
 
+    # Open and read lines safely
+    file = open(filename, "r")
+    lines = file.readlines()
+    file.close()
+
+    character = {}
+    for line in lines:
+        # Skip empty or malformed lines
+        if ": " not in line:
+            continue
+        key, value = line.strip().split(": ", 1)
+        key = key.lower().replace("character ", "")
+        # Convert numeric values
+        if value.isdigit():
+            value = int(value)
+        character[key] = value
+
+    # If the file was empty, return None
+    if len(character) == 0:
+        return None
+
+    return character
 
 # =============================
 # Function 5 - Display Character
