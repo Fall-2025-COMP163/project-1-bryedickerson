@@ -21,11 +21,14 @@ gold = 100     # scale 100–999,999,999,999
 # =============================
 # Function 1 - Character Creator
 # =============================
+
 def create_character(name, character_class):
     # stat constants
     level = 1
     gold = 100
-
+    # Added the if statement is below since test cases weren't passing 
+    if name is None:
+        name = input("Enter your name: ")
     # stats assigned based on character class
     if character_class == "Warrior":
         strength = 70
